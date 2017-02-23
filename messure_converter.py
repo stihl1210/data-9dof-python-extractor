@@ -166,7 +166,10 @@ def save_stats_from_messures(dir, statsdir, param1):
     if not os.path.exists(statsdir):
         os.mkdir(statsdir)
 
-    onlyfiles = [f for f in listdir(dir) if isfile(join(dir, f))  ]
+    #todo improve checking format
+    onlyfiles = [f for f in listdir(dir) if isfile(join(dir, f)) and (f)!='.rar' ]
+
+
     stats = list()
 
     file_comment = "mean for dataset : acc,mag,gyr - "
