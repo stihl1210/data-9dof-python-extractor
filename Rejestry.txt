@@ -1,0 +1,18 @@
+CTRL_REG1_G     0xAF -> Data Rate: 380Hz, All axes enabled
+CTRL_REG2_G     0x00
+CTRL_REG3_G     0x00
+CTRL_REG4_G     0x00 -> 245dps zakresu
+
+w reszcie defaultowe wartoœci
+
+acc:
+CTRL_REG0_XM -> 0x00  default
+CTRL_REG0_XM -> 0x00  scale 2g
+
+mag:
+CTRL_REG5_XM -> 0x94
+CTRL_REG6_XM -> 0x00 mag scale 12GS
+CTRL_REG7_XM -> 0x00 cont mode
+
+pocz¹tek: @
+koniec: *

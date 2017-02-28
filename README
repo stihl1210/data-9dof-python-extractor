@@ -1,0 +1,108 @@
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+10.24 (PI), 12.01 - ubuntu
+12.41 - Cameras
+
+
+t's a solution for Ubuntu (the idea also works for Windows or Mac) I just tried today and it works like a charm.
+
+Material
+
+    a cross-over Ethernet cable (the name is fancy but it's just a normal Ethernet cable)
+    a laptop (ubuntu)
+    a Raspberry Pi (I have the Pi2)
+
+Prerequisites on your ubuntu
+
+    Install network-manager
+
+    $sudo apt-get install network-manager
+
+    Install nmap
+
+    $sudo apt-get install nmap
+
+Edit Wired connection on your laptop (Ubuntu)
+
+    Change IpV4 settings to "Share to other computers"
+    Save the setting
+    Reboot your laptop
+
+Share WiFi connection of your laptop via Ethernet crossover cable
+
+    Hook up your RPi with your laptop using the Ethernet cable
+
+    Look up the broadcast address of the Ethernet connection (Laptop),
+
+$/sbin/ifconfig eth1 | grep "Bcast" | awk -F: '{print $3}' | awk '{print $1}' 10.42.0.255
+
+    Use this address to find out the IP address of your RPi, it's 10.42.0.96 in my case because 10.42.0.1 is my laptop
+
+    $nmap -n -sP 10.42.0.255/24
+
+      Starting Nmap 6.40 ( http://nmap.org ) at 2016-02-20 23:07 CET
+      Nmap scan report for 10.42.0.1
+      Host is up (0.00031s latency).
+      Nmap scan report for 10.42.0.96
+      Host is up (0.0023s latency).
+      Nmap done: 256 IP addresses (2 hosts up) scanned in 2.71 seconds
+
+    Login to your RPi from your laptop (-Y with X-forwarding)
+
+    $ssh -Y pi@10.42.0.96
+
+    Lo and behold! Now your RPi is connected to your laptop and RPi can share the WiFi connection.
+
+    pi@raspberrypi ~ $
+
+Share display & keyboard of your laptop with RPi
+
+    Install vncserver on Raspberry Pi
+
+    $ sudo apt-get update
+
+    $ sudo apt-get install tightvncserver
+
+    Install vncviewer on your laptop by downloading RealVNC (it supports multiple platforms) http://www.realvnc.com/download/vnc/
+
+    To be able to copy & paste from VNC server <--> VNC viewer, you need to install autocutsel on your RPi.
+
+$sudo apt-get install autocutsel
+
+If this site doesn't work, try to download the .deb directly from a mirror site, e.g. mirror.hmc.edu/debian/pool/main/a/autocutsel/autocutsel_0.10.0-1_armhf.deb
+and install it
+
+$sudo dpkg -i autocutsel_0.10.0-1_armhf.deb
+
+    Start vncserver on your RPi (You have to restart vncserver after installing autocutsel, you can issue $vncserver -kill :1)
+
+    $vncserver :1
+
+    Add autocutsel -fork to /home/pi/.vnc/xstartup
+
+     #!/bin/sh
+     xrdb $HOME/.Xresources xsetroot -solid grey 
+     autocutsel -fork
+     #x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
+     #x-window-manager &
+     # Fix to make GNOME work 
+     export XKL_XMODMAP_DISABLE=1 
+     /etc/X11/Xsession
+
+    Start vncviewer on your laptop
+
+    $vncviewer
+
+    A vncviewer window will pop up and type in the IP address of your RPi (given by your laptop) followed by port 1, which is your VNC server. for example: 10.42.0.96:1 in my case.
+
+    Connect it to the vncserver hosted on your RPi by typing in a password (set up a password yourself)
+
+    12.Now you can see the desktop of RPi on your laptop, and I opened my browser to show the shared WiFi connection is working as well.
+
